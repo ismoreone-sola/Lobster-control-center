@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lobster Control Center 🦞</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+  <!-- Top Status Bar -->
+  <nav class="border-b border-teal-900/50 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl animate-bounce">🦞</span>
+        <h1 class="font-bold text-xl tracking-tight text-teal-400">Lobster Control</h1>
+      </div>
+      <div class="flex gap-6 items-center text-sm">
+        <div id="status-indicator" class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+          </span>
+          <span class="text-slate-300 font-medium">連線中...</span>
+        </div>
+        <div class="hidden md:block">
+          Uptime: <span id="uptime" class="text-teal-400">0s</span>
+        </div>
+        <div class="hidden md:block">
+          Daily Cost: <span id="total-cost" class="text-teal-400">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+    <!-- Live Activity -->
+    <section class="md:col-span-8 bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden flex flex-col h-[500px]">
+      <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80">
+        <h2 class="font-bold flex items-center gap-2 text-teal-300">
+          🌊 實時動態 (Live Activity)
+        </h2>
+        <span id="active-task" class="text-xs bg-teal-900/50 text-teal-300 px-2 py-1 rounded">Idle</span>
+      </div>
+      <div id="activity-log" class="flex-1 overflow-y-auto p-4 space-y-2 font-mono text-sm">
+        <div class="text-slate-500 italic">[Waiting for pulses...]</div>
+      </div>
+    </section>
+
+    <!-- System Status -->
+    <section class="md:col-span-4 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+      <h2 class="font-bold text-teal-300 mb-4 flex items-center gap-2">
+        📊 系統狀態 (System Status)
+      </h2>
+      
+      <!-- Gateway Status -->
+      <div class="mb-4">
+        <h3 class="text-sm font-medium text-slate-400 mb-2">Gateway 狀態</h3>
+        <div class="flex items-center justify-between">
+          <span class="text-sm">連線狀態</span>
+          <span id="gateway-status" class="text-xs px-2 py-1 rounded bg-yellow-900/50 text-yellow-400">
+            連線中...
+          </span>
+        </div>
+      </div>
+
+      <!-- Agent Status -->
+      <div class="mb-4">
+        <h3 class="text-sm font-medium text-slate-400 mb-2">Agent 狀態</h3>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Main Agent</span>
+            <span class="text-xs px-2 py-1 rounded bg-green-900/50 text-green-400">
+              運行中
+            </span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Sub-agents</span>
+            <span id="sub-agents-count" class="text-xs px-2 py-1 rounded bg-teal-900/50 text-teal-400">
+              0
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory Usage -->
+      <div class="mb-4">
+        <h3 class="text-sm font-medium text-slate-400 mb-2">記憶體使用</h3>
+        <div class="bg-slate-700 rounded-full h-2 overflow-hidden">
+          <div id="memory-bar" class="bg-teal-500 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="text-xs text-slate-500 mt-1">
+          <span id="memory-text">0%</span> 使用率
+        </div>
+      </div>
+
+      <!-- Recent Tasks -->
+      <div>
+        <h3 class="text-sm font-medium text-slate-400 mb-2">近期任務</h3>
+        <div id="recent-tasks" class="space-y-1">
+          <div class="text-xs text-slate-500">暫無任務</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Performance Chart -->
+    <section class="md:col-span-12 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+      <h2 class="font-bold text-teal-300 mb-4 flex items-center gap-2">
+        📈 性能監控 (Performance)
+      </h2>
+      <div class="h-64">
+        <canvas id="performance-chart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
