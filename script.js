@@ -44,39 +44,55 @@ function initializeWebSocket() {
 
 // 建立 WebSocket 連接
 function connectWebSocket() {
-  ws = new WebSocket(config.gatewayWs);
+  let reconnectDelay = 1000;
+  const maxReconnectDelay = 30000;
   
-  ws.onopen = () => {
-    isConnected = true;
-    updateStatusIndicator('connected');
-    addActivityLog('🦞', '已連接到 OpenClaw Gateway', 'success');
-  };
-  
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      handleWebSocketMessage(data);
-    } catch (error) {
-      console.error('Failed to parse WebSocket message:', error);
-    }
-  };
-  
-  ws.onclose = () => {
-    isConnected = false;
-    updateStatusIndicator('disconnected');
-    addActivityLog('⚠️', 'WebSocket 連接已斷開', 'warning');
-    setTimeout(() => connectWebSocket(), 5000);
-  };
-  
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error);
-    updateStatusIndicator('error');
-  };
+  function attemptConnection() {
+    ws = new WebSocket(config.gatewayWs);
+    
+    ws.onopen = () => {
+      isConnected = true;
+      reconnectDelay = 1000; // 重置延遲
+      updateStatusIndicator('connected');
+      addActivityLog('🦞', '已連接到 OpenClaw Gateway', 'success');
+    };
+    
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        handleWebSocketMessage(data);
+      } catch (error) {
+        console.error('Failed to parse WebSocket message:', error);
+      }
+    };
+    
+    ws.onclose = () => {
+      isConnected = false;
+      updateStatusIndicator('disconnected');
+      addActivityLog('⚠️', `WebSocket 連接已斷開，${reconnectDelay/1000}秒後嘗試重連...`, 'warning');
+      
+      setTimeout(() => {
+        reconnectDelay = Math.min(reconnectDelay * 1.5, maxReconnectDelay);
+        attemptConnection();
+      }, reconnectDelay);
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      updateStatusIndicator('error');
+    };
+  }
+
+  attemptConnection();
 }
 
 // 處理 WebSocket 訊息
 function handleWebSocketMessage(data) {
   switch (data.type) {
+    case 'lock_status':
+      updateLockStatus(data.locks);
+      break;
+      
     case 'heartbeat':
       addActivityLog('💓', `心跳檢查 - 耗時: ${data.duration}ms`, 'info');
       break;
@@ -212,6 +228,29 @@ function updateMemoryUsage(usage) {
 function updateSubAgentsCount(count) {
   const subAgentsElement = document.getElementById('sub-agents-count');
   subAgentsElement.textContent = count;
+}
+
+// 更新鎖狀態監控
+function updateLockStatus(locks) {
+  const container = document.getElementById('lock-status-monitor');
+  if (!container) return;
+  
+  if (!locks || locks.length === 0) {
+    container.innerHTML = '<div class="text-xs text-slate-500 italic">目前無活躍鎖</div>';
+    return;
+  }
+  
+  container.innerHTML = locks.map(lock => `
+    <div class="flex items-center justify-between p-2 rounded bg-slate-700/50 mb-1 border-l-2 ${lock.status === 'locked' ? 'border-red-500' : 'border-green-500'}">
+      <div class="flex flex-col">
+        <span class="text-xs font-bold text-slate-200">${lock.resource}</span>
+        <span class="text-[10px] text-slate-400">持有者: ${lock.owner}</span>
+      </div>
+      <span class="text-[10px] px-1 rounded ${lock.status === 'locked' ? 'bg-red-900/50 text-red-400' : 'bg-green-900/50 text-green-400'}">
+        ${lock.status === 'locked' ? '已鎖定' : '已釋放'}
+      </span>
+    </div>
+  `).join('');
 }
 
 // 初始化圖表
