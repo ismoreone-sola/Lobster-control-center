@@ -66,6 +66,45 @@
         .note-text { font-size: 1.05em; line-height: 1.5; font-weight: 500; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Footer Style */
+        footer {
+            margin-top: 60px;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 600px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            line-height: 1.8;
+            text-align: left;
+        }
+        .footer-content h2 {
+            font-size: 1.2em;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        .footer-section {
+            margin-bottom: 25px;
+        }
+        .footer-section p {
+            margin: 5px 0;
+        }
+        .footer-section ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+        .footer-privacy {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +122,27 @@
         <div class="ledger-label">Recent Archives</div>
         <div id="noteLog"></div>
     </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h2>關於 Sola 記事本</h2>
+                <p>我們相信生活中的靈感與瑣事都值得被即時捕捉。無論是待買清單、工作雜感，或是那一瞬間的突發奇想，Sola 為此而生。</p>
+            </div>
+            
+            <div class="footer-section">
+                <ul>
+                    <li><strong>極速記錄</strong>：5 秒內完成留言並轉換文字，懂你的快節奏。</li>
+                    <li><strong>即說即記</strong>：一鍵開啟錄音，無需手動按停，讓記錄像說話一樣自然。</li>
+                    <li><strong>極簡管理</strong>：始終保持新鮮，僅保留最近 50 條訊息，過期自動斷捨離。</li>
+                </ul>
+            </div>
+
+            <div class="footer-section footer-privacy">
+                <strong>絕對隱私</strong>：所有資料僅儲存於您的本地瀏覽器。不經過服務器，不追蹤數據，您的私密只屬於您。
+            </div>
+        </div>
+    </footer>
 
     <script>
         const btn = document.getElementById('recordBtn');
