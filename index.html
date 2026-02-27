@@ -101,7 +101,7 @@
         </div>
 
         <footer>
-            SOLA SYSTEMS &middot; HYBRID RECOGNITION v4.0
+            SOLA SYSTEMS &middot; HYBRID RECOGNITION v4.1
         </footer>
     </div>
 
@@ -110,6 +110,7 @@
         const status = document.getElementById('statusText');
         const log = document.getElementById('msgLog');
         const MAX_MESSAGES = 50;
+        const RECORD_LIMIT = 7.0; // 調整為 7 秒
 
         let notes = JSON.parse(localStorage.getItem('sola_v4_intel') || '[]');
         render();
@@ -141,22 +142,23 @@
 
         if (Recognition) {
             const recog = new Recognition();
-            // 關鍵：使用 zh-HK 同時支援粵語、國語混合識別，英文與數字亦能精準捕捉
             recog.lang = 'zh-HK'; 
             recog.continuous = false;
             recog.interimResults = false;
 
             let countdown;
+            let isRecording = false;
 
             recog.onstart = () => {
+                isRecording = true;
                 btn.classList.add('recording');
                 btn.innerText = 'LISTENING';
-                let left = 10.0;
-                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S`;
+                let left = RECORD_LIMIT;
+                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S (點擊停止)`;
                 
                 countdown = setInterval(() => {
                     left -= 0.1;
-                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S`;
+                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S (點擊停止)`;
                     if (left <= 0) {
                         clearInterval(countdown);
                         recog.stop();
@@ -170,35 +172,42 @@
             };
 
             recog.onend = () => {
+                isRecording = false;
                 btn.classList.remove('recording');
                 btn.innerText = '按這留言';
                 status.innerText = 'TRANSCRIPT SYNCED';
                 clearInterval(countdown);
                 setTimeout(() => { 
-                    if(!btn.classList.contains('recording')) status.innerText = '已自動獲取授權 • 就緒'; 
+                    if(!isRecording) status.innerText = '已自動獲取授權 • 就緒'; 
                 }, 3000);
             };
 
             recog.onerror = (e) => {
+                isRecording = false;
                 if(e.error === 'not-allowed') {
                     status.innerText = "請在網址旁點擊鎖頭並【開啟麥克風】";
-                } else {
+                } else if (e.error !== 'aborted') {
                     status.innerText = "ERROR: " + e.error;
                 }
                 btn.classList.remove('recording');
+                clearInterval(countdown);
             };
 
             btn.onclick = () => {
-                if (btn.classList.contains('recording')) return;
-                // 嘗試執行一個靜默錄音以檢查/維持授權狀態
-                try { recog.start(); } catch(err) {}
+                if (isRecording) {
+                    // 如果正在錄音，點擊則手動結束
+                    recog.stop();
+                    clearInterval(countdown);
+                } else {
+                    // 開始新錄音
+                    try { recog.start(); } catch(err) {}
+                }
             };
         } else {
             status.innerText = "CRYPTO-ERROR: INCOMPATIBLE BROWSER";
             btn.disabled = true;
         }
 
-        // 頁面加載時自動嘗試喚醒麥克風（部分瀏覽器支援以此維持權限）
         window.addEventListener('load', () => {
             if (navigator.permissions && navigator.permissions.query) {
                 navigator.permissions.query({name: 'microphone'}).then(res => {
