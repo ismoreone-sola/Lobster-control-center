@@ -121,6 +121,8 @@
 
         <div class="ledger-label">Recent Archives</div>
         <div id="noteLog"></div>
+
+        <button id="clearBtn" style="margin-top: 30px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.8em; letter-spacing: 2px;">訊息清除</button>
     </div>
 
     <footer>
@@ -146,6 +148,7 @@
 
     <script>
         const btn = document.getElementById('recordBtn');
+        const clearBtn = document.getElementById('clearBtn');
         const timer = document.getElementById('timer');
         const log = document.getElementById('noteLog');
         
@@ -155,8 +158,10 @@
         function render() {
             if(notes.length === 0) {
                 log.innerHTML = '<div style="opacity:0.2; text-align:center; padding-top:40px;">LIST IS EMPTY</div>';
+                clearBtn.style.display = 'none';
                 return;
             }
+            clearBtn.style.display = 'inline-block';
             log.innerHTML = notes.map(n => `
                 <div class="note">
                     <span class="note-time">${n.time}</span>
@@ -234,6 +239,14 @@
 
             btn.onclick = () => {
                 try { recog.start(); } catch(e) { recog.abort(); }
+            };
+
+            clearBtn.onclick = () => {
+                if(confirm('確定要清除所有記錄嗎？此操作無法還原。')) {
+                    notes = [];
+                    localStorage.setItem('sola_rapid_data', JSON.stringify(notes));
+                    render();
+                }
             };
         } else {
             timer.innerText = "NOT SUPPORTED";
