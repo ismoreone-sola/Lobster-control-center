@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novel Reader</title>
     <style>
-                body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
         .container { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 20px; }
         header { text-align: center; padding-bottom: 20px; }
         .logo-text { font-size: 2em; font-weight: bold; letter-spacing: 1px; }
@@ -62,7 +62,7 @@
             <a href="#">Novels</a>
             <a href="#">Chapters</a>
             <a href="#">Profile</a>
-            <div class="search-bar">Q Search</div>
+            <div class="search-bar-container"><div class="search-bar">Q Search</div></div>
         </div>
 
         <div class="book-summary">
@@ -117,6 +117,23 @@
             </li>
         </ul>
 
+        <!-- ***** 語音留言功能區塊 ***** -->
+        <div id="voice-message-section" style="margin-top: 30px; padding: 15px; border: 1px dashed #007bff; border-radius: 8px;">
+            <h3 style="text-align: center; margin-top: 0;">語音留言板 (Voice Messages)</h3>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button id="recordButton" style="padding: 15px 30px; font-size: 1.1em; border-radius: 30px; cursor: pointer; background-color: #28a745; color: white; border: none;">
+                    &#127908; 點擊開始錄音 (10秒)
+                </button>
+                <p id="timerDisplay" style="margin-top: 10px; font-weight: bold; color: #dc3545;">等待開始...</p>
+            </div>
+            
+            <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">留言轉換記錄:</h4>
+            <div id="transcriptionLog" style="text-align: left; max-height: 300px; overflow-y: auto; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                <p>無最新留言。</p>
+            </div>
+        </div>
+        <!-- ***** 語音留言功能區塊結束 ***** -->
+
         <footer>
             <div class="footer-links">
                 <a href="#">About Us</a>
@@ -132,5 +149,83 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        const recordButton = document.getElementById('recordButton');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const transcriptionLog = document.getElementById('transcriptionLog');
+        const RECORD_DURATION_MS = 10000; // 10秒
+
+        let isRecording = false;
+        let timerInterval;
+
+        function appendLog(timestamp, text) {
+            const newEntry = document.createElement('p');
+            newEntry.innerHTML = `<strong>[${timestamp}]</strong>: ${text}`;
+            
+            // 保持最新訊息在最底部
+            if (transcriptionLog.firstChild.textContent === "無最新留言。") {
+                 transcriptionLog.innerHTML = '';
+            }
+            transcriptionLog.appendChild(newEntry);
+            transcriptionLog.scrollTop = transcriptionLog.scrollHeight; // 自動滾動到底部
+        }
+
+        function finishRecording(simulatedText) {
+            clearInterval(timerInterval);
+            isRecording = false;
+            recordButton.disabled = false;
+            recordButton.innerHTML = '&#127908; 點擊開始錄音 (10秒)';
+            timerDisplay.textContent = '等待開始...';
+
+            // 獲取當前時間作為記錄時間
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            // 模擬轉錄結果 (請在部署後替換為真實的 STT 服務結果)
+            const finalTranscription = simulatedText || "測試語音轉錄結果：這是一條模擬 10 秒的語音留言內容。";
+
+            appendLog(timestamp, finalTranscription);
+        }
+
+        recordButton.addEventListener('click', () => {
+            if (isRecording) {
+                // 停止錄音（如果點擊按鈕時在錄音）
+                finishRecording(); 
+                return;
+            }
+
+            // 開始錄音流程 (模擬)
+            isRecording = true;
+            recordButton.disabled = true;
+            recordButton.textContent = '錄音中... 請勿重複點擊';
+            timerDisplay.style.color = '#f0ad4e';
+            
+            let timeLeft = RECORD_DURATION_MS / 1000;
+            timerDisplay.textContent = `剩餘 ${timeLeft} 秒...`;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `剩餘 ${timeLeft} 秒...`;
+                if (timeLeft <= 0) {
+                    // 模擬錄音結束（10秒到時）
+                    finishRecording();
+                }
+            }, 1000);
+
+            // <<< 替換為真正的錄音和轉錄 API 呼叫 >>>
+            // 實際應用中，您會在這裡啟動 MediaRecorder API，
+            // 並在 onstop 或 10秒後，將音訊Blob發送到您的後端 STT 服務。
+            // 成功收到 STT 結果後，調用 finishRecording(realResult)
+            // 為了快速部署測試，我們在下面模擬一個結果。
+            
+            // **** 模擬 STT 結果以滿足前端邏輯 ****
+            setTimeout(() => {
+                if(isRecording) {
+                    finishRecording("測試語音轉錄結果：這是一條模擬 10 秒的語音留言內容。");
+                }
+            }, RECORD_DURATION_MS + 500); // 模擬結束後額外延遲模擬 STT 處理
+        });
+    </script>
 </body>
 </html>
