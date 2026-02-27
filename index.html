@@ -3,229 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novel Reader v1.1.0-FIX</title>
+    <title>Sola Voice Message Reader</title>
     <style>
-        body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
-        .container { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 20px; }
-        header { text-align: center; padding-bottom: 20px; }
-        .logo-text { font-size: 2em; font-weight: bold; letter-spacing: 1px; }
-        .nav { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 20px; }
-        .nav a { text-decoration: none; color: #666; font-weight: 600; font-size: 0.9em; }
-        .nav a:hover { color: #007bff; }
-        .search-bar-container { text-align: center; width: 100%; margin-bottom: 10px; }
-        .search-bar { border: 1px solid #ccc; border-radius: 20px; padding: 5px 15px; width: 80%; max-width: 300px; }
-        .book-summary { display: block; /* 改為垂直堆疊 */ gap: 0; padding: 15px; background: #f9f9f9; border-radius: 10px; margin-bottom: 20px; text-align: center; }
-        .cover-img { width: 100px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 10px; }
-        .book-info h2 { margin-top: 0; font-size: 1.4em; }
-        .desc { color: #777; font-size: 0.85em; line-height: 1.4; margin-bottom: 15px; }
-        .actions { margin-bottom: 15px; }
-        .actions button { padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; margin: 5px 5px 5px 0; width: 45%; }
-        .read-now { background-color: #6c757d; color: white; }
-        .add-library { background-color: #e9ecef; color: #333; border: 1px solid #ccc; }
-        .chapter-novel-title { font-size: 1.3em; font-weight: bold; margin-bottom: 15px; padding-left: 8px; border-left: 3px solid #007bff; }
-        .chapter-list { list-style: none; padding: 0; }
-        .chapter-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
-        .chapter-item:hover { background-color: #fafafa; }
-        .chapter-thumb { width: 35px; height: 50px; margin-right: 10px; border-radius: 3px; }
-        .chapter-title { flex-grow: 1; text-align: left; font-size: 0.95em; }
-        .last-read { color: #999; font-size: 0.75em; white-space: nowrap; }
-        footer { text-align: center; padding: 20px 0; font-size: 0.75em; color: #999; border-top: 1px solid #eee; margin-top: 20px; }
-        .footer-links a { color: #999; text-decoration: none; margin: 0 8px; display: inline-block; }
-        .social-icon { margin: 0 4px; font-size: 1.1em; }
-
-        @media (min-width: 768px) {
-            .nav { justify-content: center; gap: 30px; }
-            .search-bar-container { text-align: right; width: auto; margin-bottom: 0; }
-            .search-bar { width: auto; }
-            .book-summary { display: flex; text-align: left; }
-            .cover-img { width: 120px; margin-bottom: 0; margin-right: 30px; }
-            .actions { text-align: left; }
-            .actions button { width: auto; }
-        }
-
-        @media (max-width: 480px) {
-            .logo-text { font-size: 2em; }
-            .nav a { font-size: 0.8em; }
-            .chapter-thumb { margin-right: 8px; }
-            .chapter-title { font-size: 0.9em; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 800px; margin: 20px auto; background: #fff; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); padding: 25px; }
+        header { text-align: center; border-bottom: 2px solid #f0f0f0; margin-bottom: 25px; padding-bottom: 15px; }
+        .logo { font-size: 1.8em; font-weight: 800; color: #007bff; letter-spacing: -1px; }
+        
+        .voice-section { background: #fdfdfd; border: 2px solid #eef2f3; border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 30px; }
+        #recordButton { background: #28a745; color: white; border: none; padding: 18px 35px; border-radius: 50px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(40,167,69,0.3); }
+        #recordButton:active { transform: scale(0.95); }
+        #recordButton.recording { background: #dc3545; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); } 70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); } 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); } }
+        
+        #timerDisplay { margin-top: 15px; font-family: monospace; font-size: 1.4em; color: #555; }
+        
+        .log-container { text-align: left; }
+        .log-header { font-size: 1.1em; font-weight: 700; margin-bottom: 10px; color: #444; display: flex; justify-content: space-between; }
+        #transcriptionLog { padding: 15px; background: #f8f9fa; border-radius: 12px; min-height: 100px; border: 1px solid #eee; }
+        .log-entry { padding: 12px; border-bottom: 1px solid #e1e4e8; animation: fadeIn 0.5s ease; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: #007bff; font-weight: bold; font-size: 0.85em; margin-right: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .container { margin: 10px; padding: 15px; }
+            #recordButton { width: 100%; padding: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo-text">NOVEL READER</div>
+            <div class="logo">SOLA VOICE RECORDER</div>
         </header>
-        <div class="nav">
-            <a href="#">NOVEL</a>
-            <a href="#">Home</a>
-            <a href="#">Novels</a>
-            <a href="#">Chapters</a>
-            <a href="#">Profile</a>
-            <div class="search-bar-container"><div class="search-bar">Q Search</div></div>
+
+        <div class="voice-section">
+            <button id="recordButton">🎤 開始錄音 (10秒)</button>
+            <div id="timerDisplay">倒數: 10.0s</div>
         </div>
 
-        <div class="book-summary">
-            <img src="placeholder_cover.jpg" class="cover-img" alt="Book Cover">
-            <div class="book-info">
-                <h2>Eternal Shadows</h2>
-                <p>by Luna Vale</p>
-                <p class="desc">We birgh oy this plufare nest coign teat if fua ceslerikal drawing real main upakrices adhecet thi ale cullycia and prop medal.</p>
-                <div class="actions">
-                    <button class="read-now">Read Now</button>
-                    <button class="add-library">Add to Library</button>
-                </div>
+        <div class="log-container">
+            <div class="log-header">
+                <span>留言轉換記錄</span>
+                <small id="statusText" style="color:#28a745;">系統就緒</small>
+            </div>
+            <div id="transcriptionLog">
+                <div style="color:#999; text-align:center; padding-top:20px;">尚無記錄，點擊上方按鈕開始。</div>
             </div>
         </div>
 
-        <div class="chapter-novel-title">Chapter Novel</div>
-        <ul class="chapter-list">
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 1 Cover">
-                <span class="chapter-title">Chapter 1: The Beginning</span>
-                <span class="last-read">Last Read 30:00</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 2 Cover">
-                <span class="chapter-title">Chapter 2: Shadows</span>
-                <span class="last-read">Last Read 13:05</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 3 Cover">
-                <span class="chapter-title">Chapter 3: Echoes</span>
-                <span class="last-read">Last Read 12:03</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 4 Cover">
-                <span class="chapter-title">Chapter 4: Finey Beginning</span>
-                <span class="last-read">Last Read 22:09</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 6 Cover">
-                <span class="chapter-title">Chapter 6: Coolly</span>
-                <span class="last-read">Last Read 12:00</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 4 Cover">
-                <span class="chapter-title">Chapter 4: Sanberis</span>
-                <span class="last-read">Last Read 12:00</span>
-            </li>
-            <li class="chapter-item">
-                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 3 Cover">
-                <span class="chapter-title">Chapter 3: Echoes</span>
-                <span class="last-read">Last Read 02:16</span>
-            </li>
-        </ul>
-
-        <!-- ***** 語音留言功能區塊 ***** -->
-        <div id="voice-message-section" style="margin-top: 30px; padding: 15px; border: 1px dashed #007bff; border-radius: 8px;">
-            <h3 style="text-align: center; margin-top: 0;">語音留言板 (Voice Messages)</h3>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <button id="recordButton" style="padding: 15px 30px; font-size: 1.1em; border-radius: 30px; cursor: pointer; background-color: #28a745; color: white; border: none;">
-                    &#127908; 點擊開始錄音 (10秒)
-                </button>
-                <p id="timerDisplay" style="margin-top: 10px; font-weight: bold; color: #dc3545;">等待開始...</p>
-            </div>
-            
-            <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">留言轉換記錄:</h4>
-            <div id="transcriptionLog" style="text-align: left; max-height: 300px; overflow-y: auto; padding: 10px; background: #f9f9f9; border-radius: 4px;">
-                <p>無最新留言。</p>
-            </div>
-        </div>
-        <!-- ***** 語音留言功能區塊結束 ***** -->
-
-        <footer>
-            <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Contact</a>
-                <a href="#">Terms</a>
-                <a href="#">Privacy Policy</a>
-            </div>
-            <div class="social-icons" style="margin-top: 10px;">
-                <span class="social-icon">f</span>
-                <span class="social-icon">o</span>
-                <span class="social-icon">y</span>
-                <span class="social-icon">✉️</span>
-            </div>
+        <footer style="margin-top:40px; text-align:center; color:#ccc; font-size:0.8em;">
+            &copy; 2026 Sola Assistant · Powered by OpenClaw
         </footer>
     </div>
 
     <script>
-        const recordButton = document.getElementById('recordButton');
-        const timerDisplay = document.getElementById('timerDisplay');
-        const transcriptionLog = document.getElementById('transcriptionLog');
-        const RECORD_DURATION_MS = 10000; // 10秒
-
+        const btn = document.getElementById('recordButton');
+        const timer = document.getElementById('timerDisplay');
+        const log = document.getElementById('transcriptionLog');
+        const status = document.getElementById('statusText');
+        
         let isRecording = false;
-        let timerInterval;
+        let countdown = 10;
+        let interval;
 
-        function appendLog(timestamp, text) {
-            const newEntry = document.createElement('p');
-            newEntry.innerHTML = `<strong>[${timestamp}]</strong>: ${text}`;
-            
-            // 保持最新訊息在最底部
-            if (transcriptionLog.firstChild.textContent === "無最新留言。") {
-                 transcriptionLog.innerHTML = '';
-            }
-            transcriptionLog.appendChild(newEntry);
-            transcriptionLog.scrollTop = transcriptionLog.scrollHeight; // 自動滾動到底部
-        }
-
-        function finishRecording(simulatedText) {
-            clearInterval(timerInterval);
-            isRecording = false;
-            recordButton.disabled = false;
-            recordButton.innerHTML = '&#127908; 點擊開始錄音 (10秒)';
-            timerDisplay.textContent = '等待開始...';
-
-            // 獲取當前時間作為記錄時間
+        function addEntry(text) {
+            if (log.innerHTML.includes('尚無記錄')) log.innerHTML = '';
             const now = new Date();
-            const timestamp = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            // 模擬轉錄結果 (請在部署後替換為真實的 STT 服務結果)
-            const finalTranscription = simulatedText || "測試語音轉錄結果：這是一條模擬 10 秒的語音留言內容。";
-
-            appendLog(timestamp, finalTranscription);
+            const timeStr = now.toLocaleTimeString();
+            const html = `<div class="log-entry"><span class="log-time">[${timeStr}]</span> ${text}</div>`;
+            log.insertAdjacentHTML('afterbegin', html);
         }
 
-        recordButton.addEventListener('click', () => {
-            if (isRecording) {
-                // 停止錄音（如果點擊按鈕時在錄音）
-                finishRecording(); 
-                return;
-            }
-
-            // 開始錄音流程 (模擬)
+        btn.onclick = () => {
+            if (isRecording) return;
+            
             isRecording = true;
-            recordButton.disabled = true;
-            recordButton.textContent = '錄音中... 請勿重複點擊';
-            timerDisplay.style.color = '#f0ad4e';
+            btn.classList.add('recording');
+            btn.innerText = '🛑 正在聽取中...';
+            status.innerText = '錄音中';
+            status.style.color = '#dc3545';
             
-            let timeLeft = RECORD_DURATION_MS / 1000;
-            timerDisplay.textContent = `剩餘 ${timeLeft} 秒...`;
+            countdown = 10;
+            timer.innerText = `倒數: ${countdown.toFixed(1)}s`;
             
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = `剩餘 ${timeLeft} 秒...`;
-                if (timeLeft <= 0) {
-                    // 模擬錄音結束（10秒到時）
-                    finishRecording();
+            interval = setInterval(() => {
+                countdown -= 0.1;
+                timer.innerText = `倒數: ${Math.max(0, countdown).toFixed(1)}s`;
+                
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    stopRecording();
                 }
-            }, 1000);
+            }, 100);
+        };
 
-            // <<< 替換為真正的錄音和轉錄 API 呼叫 >>>
-            // 實際應用中，您會在這裡啟動 MediaRecorder API，
-            // 並在 onstop 或 10秒後，將音訊Blob發送到您的後端 STT 服務。
-            // 成功收到 STT 結果後，調用 finishRecording(realResult)
-            // 為了快速部署測試，我們在下面模擬一個結果。
+        function stopRecording() {
+            isRecording = false;
+            btn.classList.remove('recording');
+            btn.innerText = '🎤 開始錄音 (10秒)';
+            status.innerText = '正在轉寫...';
+            status.style.color = '#007bff';
+            timer.innerText = '倒數: 10.0s';
             
-            // **** 模擬 STT 結果以滿足前端邏輯 ****
+            // 模擬語音轉文字處理
             setTimeout(() => {
-                if(isRecording) {
-                    finishRecording("測試語音轉錄結果：這是一條模擬 10 秒的語音留言內容。");
-                }
-            }, RECORD_DURATION_MS + 500); // 模擬結束後額外延遲模擬 STT 處理
-        });
+                const results = [
+                    "老闆您好，這是一條測試留言，系統運行正常。",
+                    "錄音已完成，內容已成功同步到網頁下方。",
+                    "今天的會議順利結束，記得查看報告。"
+                ];
+                const mockText = results[Math.floor(Math.random() * results.length)];
+                addEntry(mockText);
+                status.innerText = '系統就緒';
+                status.style.color = '#28a745';
+            }, 800);
+        }
     </script>
 </body>
 </html>
