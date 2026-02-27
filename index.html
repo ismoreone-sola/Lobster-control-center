@@ -1,20 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-    <title>Sola Test Deployment</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel Reader</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        h1 { color: #333; }
+        body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 30px; }
+        header { text-align: center; padding-bottom: 30px; }
+        .logo-text { font-size: 2.5em; font-weight: bold; letter-spacing: 2px; }
+        .nav { display: flex; justify-content: center; gap: 30px; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .nav a { text-decoration: none; color: #666; font-weight: 600; }
+        .nav a:hover { color: #007bff; }
+        .search-bar { border: 1px solid #ccc; border-radius: 20px; padding: 5px 15px; }
+        .book-summary { display: flex; gap: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px; margin-bottom: 30px; }
+        .cover-img { width: 120px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .book-info h2 { margin-top: 0; }
+        .desc { color: #777; font-size: 0.9em; line-height: 1.4; }
+        .actions button { padding: 8px 15px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; margin-right: 10px; }
+        .read-now { background-color: #6c757d; color: white; }
+        .add-library { background-color: #e9ecef; color: #333; border: 1px solid #ccc; }
+        .chapter-novel-title { font-size: 1.5em; font-weight: bold; margin-bottom: 15px; padding-left: 10px; border-left: 4px solid #007bff; }
+        .chapter-list { list-style: none; padding: 0; }
+        .chapter-item { display: flex; align-items: center; padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
+        .chapter-item:hover { background-color: #fafafa; }
+        .chapter-thumb { width: 40px; height: 55px; margin-right: 15px; border-radius: 3px; }
+        .chapter-title { flex-grow: 1; text-align: left; }
+        .last-read { color: #999; font-size: 0.8em; }
+        footer { text-align: center; padding: 20px 0; font-size: 0.8em; color: #999; border-top: 1px solid #eee; margin-top: 20px; }
+        .footer-links a { color: #999; text-decoration: none; margin: 0 10px; }
+        .social-icon { margin: 0 5px; }
     </style>
 </head>
 <body>
-    <h1>Deployment Test Page: Sola 🦾</h1>
-    <p>This page was successfully generated and committed for deployment to Zeabur.</p>
-    <p id="time"></p>
-    <script>
-        document.getElementById('time').textContent = 'Generated/Committed at: ' + new Date().toLocaleString();
-    </script>
+    <div class="container">
+        <header>
+            <div class="logo-text">NOVEL READER</div>
+        </header>
+        <div class="nav">
+            <a href="#">NOVEL</a>
+            <a href="#">Home</a>
+            <a href="#">Novels</a>
+            <a href="#">Chapters</a>
+            <a href="#">Profile</a>
+            <div class="search-bar">Q Search</div>
+        </div>
+
+        <div class="book-summary">
+            <img src="placeholder_cover.jpg" class="cover-img" alt="Book Cover">
+            <div class="book-info">
+                <h2>Eternal Shadows</h2>
+                <p>by Luna Vale</p>
+                <p class="desc">We birgh oy this plufare nest coign teat if fua ceslerikal drawing real main upakrices adhecet thi ale cullycia and prop medal.</p>
+                <div class="actions">
+                    <button class="read-now">Read Now</button>
+                    <button class="add-library">Add to Library</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chapter-novel-title">Chapter Novel</div>
+        <ul class="chapter-list">
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 1 Cover">
+                <span class="chapter-title">Chapter 1: The Beginning</span>
+                <span class="last-read">Last Read 30:00</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 2 Cover">
+                <span class="chapter-title">Chapter 2: Shadows</span>
+                <span class="last-read">Last Read 13:05</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 3 Cover">
+                <span class="chapter-title">Chapter 3: Echoes</span>
+                <span class="last-read">Last Read 12:03</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 4 Cover">
+                <span class="chapter-title">Chapter 4: Finey Beginning</span>
+                <span class="last-read">Last Read 22:09</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 6 Cover">
+                <span class="chapter-title">Chapter 6: Coolly</span>
+                <span class="last-read">Last Read 12:00</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 4 Cover">
+                <span class="chapter-title">Chapter 4: Sanberis</span>
+                <span class="last-read">Last Read 12:00</span>
+            </li>
+            <li class="chapter-item">
+                <img src="placeholder_chapter.jpg" class="chapter-thumb" alt="Chapter 3 Cover">
+                <span class="chapter-title">Chapter 3: Echoes</span>
+                <span class="last-read">Last Read 02:16</span>
+            </li>
+        </ul>
+
+        <footer>
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Terms</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <div class="social-icons" style="margin-top: 10px;">
+                <span class="social-icon">f</span>
+                <span class="social-icon">o</span>
+                <span class="social-icon">y</span>
+                <span class="social-icon">✉️</span>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>
