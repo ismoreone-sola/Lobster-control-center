@@ -3,147 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLA 記事本</title>
+    <title>SOLA NOTEBOOK</title>
     <style>
-        :root { --primary: #4a69bd; --success: #38ada9; --danger: #eb4d4b; --bg: #f5f6fa; --card: #ffffff; }
-        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #2f3640; }
-        .container { max-width: 600px; margin: 20px auto; background: var(--card); border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); padding: 30px 20px; }
-        header { text-align: center; margin-bottom: 30px; }
-        .logo { font-size: 2.2em; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
-        
-        .action-card { background: #fafbfc; border: 2px solid #f1f2f6; border-radius: 20px; padding: 40px 20px; text-align: center; margin-bottom: 30px; }
-        #recordBtn { background: var(--primary); color: white; border: none; padding: 20px 40px; border-radius: 50px; font-size: 1.3em; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 100%; max-width: 280px; box-shadow: 0 8px 20px rgba(74, 105, 189, 0.2); }
-        #recordBtn:active { transform: scale(0.96); }
-        #recordBtn.recording { background: var(--danger); animation: glow 1.5s infinite; }
-        @keyframes glow { 0% { box-shadow: 0 0 0 0 rgba(235, 77, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(235, 77, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(235, 77, 75, 0); } }
-        
-        #timer { margin-top: 15px; font-size: 1.1em; font-weight: 600; color: #7f8c8d; height: 1.5em; }
-        
-        .log-wrap { text-align: left; }
-        .log-header { font-size: 1.1em; font-weight: 700; margin-bottom: 15px; padding: 0 5px; display: flex; justify-content: space-between; align-items: center; }
-        .count-tag { font-size: 0.7em; background: #dfe4ea; padding: 2px 8px; border-radius: 10px; color: #747d8c; }
-        #msgLog { min-height: 200px; }
-        .msg-item { background: #fff; border: 1px solid #f1f2f6; padding: 15px; border-radius: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); animation: slideUp 0.4s ease-out; position: relative; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .msg-time { font-size: 0.8em; color: var(--primary); font-weight: 600; margin-bottom: 4px; display: block; opacity: 0.7; }
-        .msg-text { line-height: 1.6; font-size: 1.05em; color: #2d3436; }
-        
-        footer { margin-top: 30px; text-align: center; color: #ced6e0; font-size: 0.85em; }
-        
-        @media (max-width: 480px) {
-            .container { margin: 0; border-radius: 0; min-height: 100vh; }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --text-accent: #6c5ce7;
+            --record-red: #ff7675;
+            --shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            color: var(--text-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .title-main {
+            font-size: 2.4em;
+            font-weight: 300;
+            color: white;
+            letter-spacing: 4px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .title-sub {
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 8px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #recordBtn {
+            background: var(--text-accent);
+            color: white;
+            border: none;
+            padding: 22px 45px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            width: 100%;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        #recordBtn:active { transform: scale(0.97); box-shadow: 0 5px 10px rgba(108, 92, 231, 0.2); }
+        #recordBtn.recording { background: var(--record-red); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); } }
+
+        #statusText { margin-top: 20px; font-size: 0.9em; color: #b2bec3; font-weight: 500; }
+
+        .log-section { width: 100%; }
+        .log-label { color: white; font-size: 0.9em; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; display: block; padding-left: 10px; }
+
+        #msgLog { list-style: none; padding: 0; margin: 0; }
+
+        .note-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--text-accent);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn { from { opacity: 0; x: -20px; } to { opacity: 1; x: 0; } }
+
+        .note-date {
+            font-size: 0.75em;
+            color: #bdc3c7;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+            font-family: monospace;
+        }
+
+        .note-content {
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: var(--text-main);
+            font-weight: 400;
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7em;
+            letter-spacing: 2px;
+            margin-top: 50px;
+            padding-bottom: 30px;
+        }
+
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">SOLA 記事本 📔</div>
+            <h1 class="title-main">SOLA</h1>
+            <div class="title-sub">NOTEBOOK</div>
         </header>
 
-        <div class="action-card">
+        <div class="main-card">
             <button id="recordBtn">按這留言</button>
-            <div id="timer">點擊按鈕開始 (限時10秒)</div>
+            <div id="statusText">等待指令 (限時10秒)</div>
         </div>
 
-        <div class="log-wrap">
-            <div class="log-header">
-                <span>記事紀錄 <span class="count-tag">上限 50 條</span></span>
-            </div>
+        <div class="log-section">
+            <span class="log-label">RECENT NOTES</span>
             <div id="msgLog"></div>
         </div>
 
         <footer>
-            &copy; 2026 SOLA NOTE · 個人語音記事
+            DESIGNED BY SOLA &middot; 2026
         </footer>
     </div>
 
     <script>
         const btn = document.getElementById('recordBtn');
-        const timer = document.getElementById('timer');
+        const status = document.getElementById('statusText');
         const log = document.getElementById('msgLog');
         const MAX_MESSAGES = 50;
 
-        let logs = JSON.parse(localStorage.getItem('sola_notebook_v2') || '[]');
+        let notes = JSON.parse(localStorage.getItem('sola_elegant_v3') || '[]');
         render();
 
         const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!Recognition) {
-            timer.innerText = "瀏覽器不支援語音辨識";
-            btn.disabled = true;
-        }
 
         function render() {
-            if (logs.length === 0) {
-                log.innerHTML = '<div style="color:#ced6e0; text-align:center; padding-top:50px;">目前沒有記事內容</div>';
+            if (notes.length === 0) {
+                log.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center; padding-top:40px; font-size:0.8em; letter-spacing:2px;">NO RECENT DATA</div>';
                 return;
             }
-            log.innerHTML = logs.map(m => `
-                <div class="msg-item">
-                    <span class="msg-time">${m.time}</span>
-                    <div class="msg-text">${m.text}</div>
+            log.innerHTML = notes.map(n => `
+                <div class="note-item">
+                    <span class="note-date">${n.fullDate}</span>
+                    <div class="note-content">${n.text}</div>
                 </div>
             `).join('');
         }
 
-        function addNote(text) {
+        function saveNote(text) {
             const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+            const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
             
-            // 新增至首位 (Unshift)
-            logs.unshift({ time: timeStr, text: text });
+            notes.unshift({ fullDate: dateStr, text: text });
+            if (notes.length > MAX_MESSAGES) notes.pop();
             
-            // 超過50條自動刪除最舊的 (Pop)
-            if (logs.length > MAX_MESSAGES) {
-                logs.pop();
-            }
-            
-            localStorage.setItem('sola_notebook_v2', JSON.stringify(logs));
+            localStorage.setItem('sola_elegant_v3', JSON.stringify(notes));
             render();
         }
 
         if (Recognition) {
             const recog = new Recognition();
             recog.lang = 'zh-HK';
-            recog.interimResults = false;
-            
             let countdown;
-            let countVal = 10;
 
             recog.onstart = () => {
                 btn.classList.add('recording');
-                btn.innerText = '正在聽取...';
-                countVal = 10.0;
-                timer.style.color = '#eb4d4b';
+                btn.innerText = 'LISTENING';
+                let left = 10.0;
+                status.innerText = `READY... ${left.toFixed(1)}S`;
                 
                 countdown = setInterval(() => {
-                    countVal -= 0.1;
-                    timer.innerText = `剩餘時間: ${Math.max(0, countVal).toFixed(1)}s`;
-                    if (countVal <= 0) {
+                    left -= 0.1;
+                    status.innerText = `READY... ${Math.max(0, left).toFixed(1)}S`;
+                    if (left <= 0) {
                         clearInterval(countdown);
                         recog.stop();
                     }
                 }, 100);
             };
 
-            recog.onresult = (e) => {
-                const text = e.results[0][0].transcript;
-                addNote(text);
-            };
+            recog.onresult = (e) => saveNote(e.results[0][0].transcript);
 
             recog.onend = () => {
                 btn.classList.remove('recording');
                 btn.innerText = '按這留言';
-                timer.style.color = '#7f8c8d';
-                timer.innerText = '記事已儲存';
+                status.innerText = 'SAVED';
                 clearInterval(countdown);
-                setTimeout(() => { if(btn.innerText === '按這留言') timer.innerText = '點擊按鈕開始 (限時10秒)'; }, 3000);
+                setTimeout(() => { if(!btn.classList.contains('recording')) status.innerText = '等待指令 (限時10秒)'; }, 3000);
             };
 
             btn.onclick = () => {
                 if (btn.classList.contains('recording')) return;
                 try { recog.start(); } catch(e) {}
             };
+        } else {
+            status.innerText = "UNSUPPORTED BROWSER";
+            btn.disabled = true;
         }
     </script>
 </body>
