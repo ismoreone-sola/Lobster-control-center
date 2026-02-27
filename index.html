@@ -57,18 +57,11 @@
             width: 100%;
         }
 
-        #recordBtn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
+        #recordBtn:disabled { opacity: 0.6; cursor: not-allowed; }
         #recordBtn.recording { background: var(--record-red); animation: shake 0.5s infinite; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 
         #statusText { margin-top: 25px; font-size: 0.8em; color: #82ccdd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-        .log-label { color: rgba(255,255,255,0.8); font-size: 0.8em; font-weight: 700; letter-spacing: 3px; margin-bottom: 20px; display: block; padding-left: 5px; text-transform: uppercase; }
 
         .note-item {
             background: rgba(255, 255, 255, 0.95);
@@ -101,12 +94,12 @@
         </div>
 
         <div class="log-section">
-            <span class="log-label">History Ledger</span>
+            <span style="color:rgba(255,255,255,0.8); font-size:0.8em; font-weight:700; letter-spacing:3px; margin-bottom:20px; display:block; text-transform:uppercase;">History Ledger</span>
             <div id="msgLog"></div>
         </div>
 
         <footer>
-            SOLA SYSTEMS &middot; STABLE MODE v4.3
+            SOLA SYSTEMS &middot; ULTRA-STABLE v4.4
         </footer>
     </div>
 
@@ -114,13 +107,9 @@
         const btn = document.getElementById('recordBtn');
         const status = document.getElementById('statusText');
         const log = document.getElementById('msgLog');
-        const MAX_MESSAGES = 50;
-        const RECORD_LIMIT = 5.0; // 調整為 5 秒
-
+        
         let notes = JSON.parse(localStorage.getItem('sola_v4_intel') || '[]');
         render();
-
-        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         function render() {
             if (notes.length === 0) {
@@ -140,85 +129,72 @@
             const now = new Date();
             const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
             
+            // 查重：避免同一條訊息因為瀏覽器事件多次觸發而重複儲存
+            if (notes.length > 0 && notes[0].text === text && (new Date() - new Date(notes[0].fullDate)) < 2000) return;
+
             notes.unshift({ fullDate: dateStr, text: text });
-            if (notes.length > MAX_MESSAGES) notes.pop();
+            if (notes.length > 50) notes.pop();
             localStorage.setItem('sola_v4_intel', JSON.stringify(notes));
             render();
         }
 
+        const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
         if (Recognition) {
             const recog = new Recognition();
-            recog.lang = 'zh-HK'; 
-            recog.continuous = false;
+            recog.lang = 'zh-HK';
+            recog.continuous = false; // 關鍵：單次聽取更穩定
             recog.interimResults = false;
 
-            let countdown;
-            let isRecording = false;
+            let forceStopTimeout;
 
             recog.onstart = () => {
-                isRecording = true;
-                btn.disabled = true; // 錄音期間鎖定按鈕，防止手動取消導致的錯誤
+                btn.disabled = true;
                 btn.classList.add('recording');
                 btn.innerText = 'LISTENING';
-                let left = RECORD_LIMIT;
-                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S`;
-                
-                countdown = setInterval(() => {
-                    left -= 0.1;
-                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S`;
-                    if (left <= 0) {
-                        clearInterval(countdown);
-                        recog.stop(); 
-                    }
-                }, 100);
+                status.innerText = "聽取中 (5秒)...";
+
+                // 設置 5 秒強制結束指令，但給予結果處理空間
+                forceStopTimeout = setTimeout(() => {
+                    recog.stop(); 
+                }, 5000);
             };
 
             recog.onresult = (e) => {
-                const result = e.results[0][0].transcript;
+                clearTimeout(forceStopTimeout);
+                const result = e.results[e.results.length - 1][0].transcript;
                 saveNote(result);
             };
 
             recog.onend = () => {
-                isRecording = false;
                 btn.disabled = false;
                 btn.classList.remove('recording');
                 btn.innerText = '按這留言';
-                status.innerText = 'TRANSCRIPT SYNCED';
-                clearInterval(countdown);
-                setTimeout(() => { 
-                    if(!isRecording) status.innerText = '已自動獲取授權 • 就緒'; 
-                }, 3000);
+                status.innerText = "記事已同步";
+                clearTimeout(forceStopTimeout);
+                setTimeout(() => { status.innerText = "就緒"; }, 2000);
             };
 
             recog.onerror = (e) => {
-                isRecording = false;
+                console.error("Speech Recognition Error:", e.error);
+                status.innerText = "辨識結束";
                 btn.disabled = false;
-                if(e.error === 'not-allowed') {
-                    status.innerText = "請設置權限為【開啟麥克風】";
-                } else if (e.error !== 'aborted') {
-                    status.innerText = "RECOGNITION STOPPED";
-                }
                 btn.classList.remove('recording');
-                clearInterval(countdown);
+                btn.innerText = '按這留言';
             };
 
             btn.onclick = () => {
-                if (!isRecording) {
-                    try { recog.start(); } catch(err) { console.error(err); }
+                try {
+                    recog.start();
+                } catch(err) {
+                    console.log("Recog busy, resetting...");
+                    recog.abort();
+                    setTimeout(() => recog.start(), 100);
                 }
             };
         } else {
-            status.innerText = "BROWSER NOT SUPPORTED";
-            btn.disabled = true;
+            status.innerText = "不支援此瀏覽器";
         }
-
-        window.addEventListener('load', () => {
-            if (navigator.permissions && navigator.permissions.query) {
-                navigator.permissions.query({name: 'microphone'}).then(res => {
-                    if(res.state === 'granted') status.innerText = '已自動獲取授權 • 就緒';
-                });
-            }
-        });
     </script>
 </body>
 </html>
