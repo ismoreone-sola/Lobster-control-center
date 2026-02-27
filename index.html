@@ -57,7 +57,12 @@
             width: 100%;
         }
 
-        #recordBtn:active { transform: translateY(2px); opacity: 0.9; }
+        #recordBtn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #recordBtn.recording { background: var(--record-red); animation: shake 0.5s infinite; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 
@@ -101,7 +106,7 @@
         </div>
 
         <footer>
-            SOLA SYSTEMS &middot; HYBRID RECOGNITION v4.2
+            SOLA SYSTEMS &middot; STABLE MODE v4.3
         </footer>
     </div>
 
@@ -110,7 +115,7 @@
         const status = document.getElementById('statusText');
         const log = document.getElementById('msgLog');
         const MAX_MESSAGES = 50;
-        const RECORD_LIMIT = 7.0;
+        const RECORD_LIMIT = 5.0; // 調整為 5 秒
 
         let notes = JSON.parse(localStorage.getItem('sola_v4_intel') || '[]');
         render();
@@ -134,8 +139,6 @@
             if(!text || text.trim() === "") return;
             const now = new Date();
             const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            // 避免完全重複的連續留言
-            if(notes.length > 0 && notes[0].text === text) return;
             
             notes.unshift({ fullDate: dateStr, text: text });
             if (notes.length > MAX_MESSAGES) notes.pop();
@@ -154,17 +157,18 @@
 
             recog.onstart = () => {
                 isRecording = true;
+                btn.disabled = true; // 錄音期間鎖定按鈕，防止手動取消導致的錯誤
                 btn.classList.add('recording');
                 btn.innerText = 'LISTENING';
                 let left = RECORD_LIMIT;
-                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S (點擊停止)`;
+                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S`;
                 
                 countdown = setInterval(() => {
                     left -= 0.1;
-                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S (點擊停止)`;
+                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S`;
                     if (left <= 0) {
                         clearInterval(countdown);
-                        recog.stop(); // 觸發正常結束
+                        recog.stop(); 
                     }
                 }, 100);
             };
@@ -176,6 +180,7 @@
 
             recog.onend = () => {
                 isRecording = false;
+                btn.disabled = false;
                 btn.classList.remove('recording');
                 btn.innerText = '按這留言';
                 status.innerText = 'TRANSCRIPT SYNCED';
@@ -186,26 +191,20 @@
             };
 
             recog.onerror = (e) => {
-                // 如果是 aborted 表示是人為中斷，通常不視為錯誤
-                if (e.error !== 'aborted') {
-                    if(e.error === 'not-allowed') {
-                        status.innerText = "請設置權限為【開啟麥克風】";
-                    } else {
-                        status.innerText = "RECOGNITION STOPPED";
-                    }
+                isRecording = false;
+                btn.disabled = false;
+                if(e.error === 'not-allowed') {
+                    status.innerText = "請設置權限為【開啟麥克風】";
+                } else if (e.error !== 'aborted') {
+                    status.innerText = "RECOGNITION STOPPED";
                 }
                 btn.classList.remove('recording');
-                isRecording = false;
                 clearInterval(countdown);
             };
 
             btn.onclick = () => {
-                if (isRecording) {
-                    // 使用 stop() 而非 abort()，這會確保執行最後一次的 onresult
-                    recog.stop();
-                    clearInterval(countdown);
-                } else {
-                    try { recog.start(); } catch(err) {}
+                if (!isRecording) {
+                    try { recog.start(); } catch(err) { console.error(err); }
                 }
             };
         } else {
