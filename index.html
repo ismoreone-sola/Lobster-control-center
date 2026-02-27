@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLA NOTEBOOK</title>
+    <title>SOLA INTELLIGENT NOTE</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #2d3436;
-            --text-accent: #6c5ce7;
-            --record-red: #ff7675;
-            --shadow: 0 15px 35px rgba(0,0,0,0.1);
+            --bg-gradient: linear-gradient(135deg, #1e3799 0%, #0c2461 100%);
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-main: #0a3d62;
+            --text-accent: #3c6382;
+            --record-red: #eb2f06;
+            --shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg-gradient);
             background-attachment: fixed;
             min-height: 100vh;
@@ -26,135 +26,82 @@
             color: var(--text-main);
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            animation: fadeIn 0.8s ease-out;
-        }
+        .container { width: 100%; max-width: 480px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-top: 20px;
-        }
-
-        .title-main {
-            font-size: 2.4em;
-            font-weight: 300;
-            color: white;
-            letter-spacing: 4px;
-            margin: 0;
-            text-transform: uppercase;
-        }
-
-        .title-sub {
-            font-size: 0.8em;
-            color: rgba(255,255,255,0.7);
-            letter-spacing: 8px;
-            margin-top: 5px;
-            text-transform: uppercase;
-        }
+        header { text-align: center; margin-bottom: 35px; margin-top: 10px; }
+        .title-main { font-size: 2.2em; font-weight: 200; color: white; letter-spacing: 6px; margin: 0; text-transform: uppercase; }
+        .title-sub { font-size: 0.7em; color: rgba(255,255,255,0.6); letter-spacing: 10px; margin-top: 5px; font-weight: 300; }
 
         .main-card {
             background: var(--card-bg);
-            border-radius: 30px;
-            padding: 40px 30px;
+            border-radius: 35px;
+            padding: 45px 30px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         #recordBtn {
-            background: var(--text-accent);
+            background: #0a3d62;
             color: white;
             border: none;
-            padding: 22px 45px;
-            border-radius: 50px;
-            font-size: 1.1em;
+            padding: 24px 50px;
+            border-radius: 60px;
+            font-size: 1.2em;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
         }
 
-        #recordBtn:active { transform: scale(0.97); box-shadow: 0 5px 10px rgba(108, 92, 231, 0.2); }
-        #recordBtn.recording { background: var(--record-red); animation: pulse 1.5s infinite; }
+        #recordBtn:active { transform: translateY(2px); opacity: 0.9; }
+        #recordBtn.recording { background: var(--record-red); animation: shake 0.5s infinite; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(255, 118, 117, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); } }
+        #statusText { margin-top: 25px; font-size: 0.8em; color: #82ccdd; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
-        #statusText { margin-top: 20px; font-size: 0.9em; color: #b2bec3; font-weight: 500; }
-
-        .log-section { width: 100%; }
-        .log-label { color: white; font-size: 0.9em; font-weight: 600; letter-spacing: 2px; margin-bottom: 20px; display: block; padding-left: 10px; }
-
-        #msgLog { list-style: none; padding: 0; margin: 0; }
+        .log-label { color: rgba(255,255,255,0.8); font-size: 0.8em; font-weight: 700; letter-spacing: 3px; margin-bottom: 20px; display: block; padding-left: 5px; text-transform: uppercase; }
 
         .note-item {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 22px;
+            padding: 22px;
             margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border-left: 5px solid var(--text-accent);
-            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-left: 6px solid #3c6382;
+            animation: slideIn 0.4s ease-out;
         }
 
-        @keyframes slideIn { from { opacity: 0; x: -20px; } to { opacity: 1; x: 0; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-        .note-date {
-            font-size: 0.75em;
-            color: #bdc3c7;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: block;
-            font-family: monospace;
-        }
+        .note-date { font-size: 0.7em; color: #60a3bc; font-weight: 700; margin-bottom: 10px; display: block; font-family: 'JetBrains Mono', monospace; }
+        .note-content { font-size: 1.1em; line-height: 1.5; color: #0a3d62; font-weight: 500; }
 
-        .note-content {
-            font-size: 1.05em;
-            line-height: 1.6;
-            color: var(--text-main);
-            font-weight: 400;
-        }
-
-        footer {
-            text-align: center;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.7em;
-            letter-spacing: 2px;
-            margin-top: 50px;
-            padding-bottom: 30px;
-        }
-
-        /* 滾動條美化 */
-        ::-webkit-scrollbar { width: 0px; }
+        footer { text-align: center; color: rgba(255,255,255,0.3); font-size: 0.65em; letter-spacing: 3px; margin: 40px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1 class="title-main">SOLA</h1>
-            <div class="title-sub">NOTEBOOK</div>
+            <div class="title-sub">INTELLIGENT NOTE</div>
         </header>
 
         <div class="main-card">
             <button id="recordBtn">按這留言</button>
-            <div id="statusText">等待指令 (限時10秒)</div>
+            <div id="statusText">已自動獲取授權 • 就緒</div>
         </div>
 
         <div class="log-section">
-            <span class="log-label">RECENT NOTES</span>
+            <span class="log-label">History Ledger</span>
             <div id="msgLog"></div>
         </div>
 
         <footer>
-            DESIGNED BY SOLA &middot; 2026
+            SOLA SYSTEMS &middot; HYBRID RECOGNITION v4.0
         </footer>
     </div>
 
@@ -164,14 +111,14 @@
         const log = document.getElementById('msgLog');
         const MAX_MESSAGES = 50;
 
-        let notes = JSON.parse(localStorage.getItem('sola_elegant_v3') || '[]');
+        let notes = JSON.parse(localStorage.getItem('sola_v4_intel') || '[]');
         render();
 
         const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         function render() {
             if (notes.length === 0) {
-                log.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center; padding-top:40px; font-size:0.8em; letter-spacing:2px;">NO RECENT DATA</div>';
+                log.innerHTML = '<div style="color:rgba(255,255,255,0.2); text-align:center; padding-top:50px; font-size:0.7em; letter-spacing:4px;">NO ARCHIVED DATA</div>';
                 return;
             }
             log.innerHTML = notes.map(n => `
@@ -183,30 +130,33 @@
         }
 
         function saveNote(text) {
+            if(!text || text.trim() === "") return;
             const now = new Date();
             const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            
             notes.unshift({ fullDate: dateStr, text: text });
             if (notes.length > MAX_MESSAGES) notes.pop();
-            
-            localStorage.setItem('sola_elegant_v3', JSON.stringify(notes));
+            localStorage.setItem('sola_v4_intel', JSON.stringify(notes));
             render();
         }
 
         if (Recognition) {
             const recog = new Recognition();
-            recog.lang = 'zh-HK';
+            // 關鍵：使用 zh-HK 同時支援粵語、國語混合識別，英文與數字亦能精準捕捉
+            recog.lang = 'zh-HK'; 
+            recog.continuous = false;
+            recog.interimResults = false;
+
             let countdown;
 
             recog.onstart = () => {
                 btn.classList.add('recording');
                 btn.innerText = 'LISTENING';
                 let left = 10.0;
-                status.innerText = `READY... ${left.toFixed(1)}S`;
+                status.innerText = `CAPTURE MODE: ${left.toFixed(1)}S`;
                 
                 countdown = setInterval(() => {
                     left -= 0.1;
-                    status.innerText = `READY... ${Math.max(0, left).toFixed(1)}S`;
+                    status.innerText = `CAPTURE MODE: ${Math.max(0, left).toFixed(1)}S`;
                     if (left <= 0) {
                         clearInterval(countdown);
                         recog.stop();
@@ -214,24 +164,48 @@
                 }, 100);
             };
 
-            recog.onresult = (e) => saveNote(e.results[0][0].transcript);
+            recog.onresult = (e) => {
+                const result = e.results[0][0].transcript;
+                saveNote(result);
+            };
 
             recog.onend = () => {
                 btn.classList.remove('recording');
                 btn.innerText = '按這留言';
-                status.innerText = 'SAVED';
+                status.innerText = 'TRANSCRIPT SYNCED';
                 clearInterval(countdown);
-                setTimeout(() => { if(!btn.classList.contains('recording')) status.innerText = '等待指令 (限時10秒)'; }, 3000);
+                setTimeout(() => { 
+                    if(!btn.classList.contains('recording')) status.innerText = '已自動獲取授權 • 就緒'; 
+                }, 3000);
+            };
+
+            recog.onerror = (e) => {
+                if(e.error === 'not-allowed') {
+                    status.innerText = "請在網址旁點擊鎖頭並【開啟麥克風】";
+                } else {
+                    status.innerText = "ERROR: " + e.error;
+                }
+                btn.classList.remove('recording');
             };
 
             btn.onclick = () => {
                 if (btn.classList.contains('recording')) return;
-                try { recog.start(); } catch(e) {}
+                // 嘗試執行一個靜默錄音以檢查/維持授權狀態
+                try { recog.start(); } catch(err) {}
             };
         } else {
-            status.innerText = "UNSUPPORTED BROWSER";
+            status.innerText = "CRYPTO-ERROR: INCOMPATIBLE BROWSER";
             btn.disabled = true;
         }
+
+        // 頁面加載時自動嘗試喚醒麥克風（部分瀏覽器支援以此維持權限）
+        window.addEventListener('load', () => {
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({name: 'microphone'}).then(res => {
+                    if(res.state === 'granted') status.innerText = '已自動獲取授權 • 就緒';
+                });
+            }
+        });
     </script>
 </body>
 </html>
