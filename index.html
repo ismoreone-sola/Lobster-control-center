@@ -5,31 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novel Reader</title>
     <style>
-        body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
-        .container { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 30px; }
-        header { text-align: center; padding-bottom: 30px; }
-        .logo-text { font-size: 2.5em; font-weight: bold; letter-spacing: 2px; }
-        .nav { display: flex; justify-content: center; gap: 30px; padding: 15px 0; border-bottom: 1px solid #eee; margin-bottom: 20px; }
-        .nav a { text-decoration: none; color: #666; font-weight: 600; }
+                body { font-family: sans-serif; background-color: #f0f4f8; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 900px; margin: 20px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 20px; }
+        header { text-align: center; padding-bottom: 20px; }
+        .logo-text { font-size: 2em; font-weight: bold; letter-spacing: 1px; }
+        .nav { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .nav a { text-decoration: none; color: #666; font-weight: 600; font-size: 0.9em; }
         .nav a:hover { color: #007bff; }
-        .search-bar { border: 1px solid #ccc; border-radius: 20px; padding: 5px 15px; }
-        .book-summary { display: flex; gap: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px; margin-bottom: 30px; }
-        .cover-img { width: 120px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .book-info h2 { margin-top: 0; }
-        .desc { color: #777; font-size: 0.9em; line-height: 1.4; }
-        .actions button { padding: 8px 15px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; margin-right: 10px; }
+        .search-bar-container { text-align: center; width: 100%; margin-bottom: 10px; }
+        .search-bar { border: 1px solid #ccc; border-radius: 20px; padding: 5px 15px; width: 80%; max-width: 300px; }
+        .book-summary { display: block; /* 改為垂直堆疊 */ gap: 0; padding: 15px; background: #f9f9f9; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .cover-img { width: 100px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 10px; }
+        .book-info h2 { margin-top: 0; font-size: 1.4em; }
+        .desc { color: #777; font-size: 0.85em; line-height: 1.4; margin-bottom: 15px; }
+        .actions { margin-bottom: 15px; }
+        .actions button { padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; margin: 5px 5px 5px 0; width: 45%; }
         .read-now { background-color: #6c757d; color: white; }
         .add-library { background-color: #e9ecef; color: #333; border: 1px solid #ccc; }
-        .chapter-novel-title { font-size: 1.5em; font-weight: bold; margin-bottom: 15px; padding-left: 10px; border-left: 4px solid #007bff; }
+        .chapter-novel-title { font-size: 1.3em; font-weight: bold; margin-bottom: 15px; padding-left: 8px; border-left: 3px solid #007bff; }
         .chapter-list { list-style: none; padding: 0; }
-        .chapter-item { display: flex; align-items: center; padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
+        .chapter-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
         .chapter-item:hover { background-color: #fafafa; }
-        .chapter-thumb { width: 40px; height: 55px; margin-right: 15px; border-radius: 3px; }
-        .chapter-title { flex-grow: 1; text-align: left; }
-        .last-read { color: #999; font-size: 0.8em; }
-        footer { text-align: center; padding: 20px 0; font-size: 0.8em; color: #999; border-top: 1px solid #eee; margin-top: 20px; }
-        .footer-links a { color: #999; text-decoration: none; margin: 0 10px; }
-        .social-icon { margin: 0 5px; }
+        .chapter-thumb { width: 35px; height: 50px; margin-right: 10px; border-radius: 3px; }
+        .chapter-title { flex-grow: 1; text-align: left; font-size: 0.95em; }
+        .last-read { color: #999; font-size: 0.75em; white-space: nowrap; }
+        footer { text-align: center; padding: 20px 0; font-size: 0.75em; color: #999; border-top: 1px solid #eee; margin-top: 20px; }
+        .footer-links a { color: #999; text-decoration: none; margin: 0 8px; display: inline-block; }
+        .social-icon { margin: 0 4px; font-size: 1.1em; }
+
+        @media (min-width: 768px) {
+            .nav { justify-content: center; gap: 30px; }
+            .search-bar-container { text-align: right; width: auto; margin-bottom: 0; }
+            .search-bar { width: auto; }
+            .book-summary { display: flex; text-align: left; }
+            .cover-img { width: 120px; margin-bottom: 0; margin-right: 30px; }
+            .actions { text-align: left; }
+            .actions button { width: auto; }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text { font-size: 2em; }
+            .nav a { font-size: 0.8em; }
+            .chapter-thumb { margin-right: 8px; }
+            .chapter-title { font-size: 0.9em; }
+        }
     </style>
 </head>
 <body>
